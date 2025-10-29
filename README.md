@@ -1,3 +1,5 @@
+![Screen Recording 2025-10-29 at 12 26 22 (1)](https://github.com/user-attachments/assets/5afa54c7-ea13-4d87-bea4-01053dd63dd1)
+
 # Article API - October CMS
 
 RESTful API to display articles and categories from October CMS to mobile or web applications.
