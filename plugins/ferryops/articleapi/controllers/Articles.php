@@ -75,7 +75,6 @@ class Articles extends Controller
                 ], 404);
             }
 
-            // Load kategori
             $article->load('categories');
 
             return Response::json([
@@ -205,7 +204,7 @@ class Articles extends Controller
             'published_at' => $article->published_at,
             'created_at' => $article->created_at,
             'updated_at' => $article->updated_at,
-            'featured_images' => $article->featured_images,
+            'featured_images' => $article->featured_images_data,
             'categories' => $categories,
         ];
 

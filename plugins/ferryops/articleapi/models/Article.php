@@ -2,18 +2,18 @@
 
 use RainLab\Blog\Models\Post as BlogPost;
 use RainLab\Blog\Models\Category;
+use System\Models\File;
 
 class Article extends BlogPost
 {
     protected $hidden = ['api_token'];
-    protected $appends = ['url'];
+    protected $appends = ['url', 'featured_images_data'];
 
     public function getUrlAttribute()
     {
         return url('blog/post/' . $this->slug);
     }
 
-    // Relasi ke kategori
     public function categories()
     {
         return $this->belongsToMany(
@@ -22,6 +22,34 @@ class Article extends BlogPost
             'post_id',
             'category_id'
         );
+    }
+
+    public function getFeaturedImagesDataAttribute()
+    {
+        $images = File::where('attachment_type', 'RainLab\Blog\Models\Post')
+            ->where('attachment_id', $this->id)
+            ->where('field', 'featured_images')
+            ->orderBy('sort_order', 'asc')
+            ->get();
+
+        if ($images->isEmpty()) {
+            return null;
+        }
+
+        return $images->map(function($image) {
+            return [
+                'id' => $image->id,
+                'file_name' => $image->file_name,
+                'disk_name' => $image->disk_name,
+                'file_size' => $image->file_size,
+                'content_type' => $image->content_type,
+                'title' => $image->title,
+                'description' => $image->description,
+                'path' => $image->getPath(),
+                'url' => $image->getPath(),
+                'thumb' => $image->getThumb(400, 300, ['mode' => 'crop']),
+            ];
+        })->toArray();
     }
 
     protected $casts = [
