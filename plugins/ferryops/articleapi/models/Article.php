@@ -3,15 +3,31 @@
 use RainLab\Blog\Models\Post as BlogPost;
 use RainLab\Blog\Models\Category;
 use System\Models\File;
+use Backend\Models\User; // Import User model
 
 class Article extends BlogPost
 {
     protected $hidden = ['api_token'];
-    protected $appends = ['url', 'featured_images_data'];
+    protected $appends = ['url', 'featured_images_data', 'author_name'];
 
     public function getUrlAttribute()
     {
         return url('blog/post/' . $this->slug);
+    }
+
+    // Tambahkan accessor untuk author_name
+    public function getAuthorNameAttribute()
+    {
+        if ($this->user) {
+            return $this->user->first_name . ' ' . $this->user->last_name;
+        }
+        return 'Unknown';
+    }
+
+    // Relasi ke user (author)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function categories()

@@ -31,8 +31,8 @@ class Articles extends Controller
             $articles = $query->orderBy('created_at', 'desc')
                 ->paginate($limit, ['*'], 'page', $page);
 
-            // Load kategori untuk setiap artikel
-            $articles->load('categories');
+            // Load kategori dan user untuk setiap artikel
+            $articles->load(['categories', 'user']);
 
             // Format data dengan kategori (tanpa content)
             $data = $articles->items();
@@ -75,7 +75,7 @@ class Articles extends Controller
                 ], 404);
             }
 
-            $article->load('categories');
+            $article->load(['categories', 'user']);
 
             return Response::json([
                 'status' => 'success',
@@ -129,7 +129,7 @@ class Articles extends Controller
             $articles = $query->orderBy('created_at', 'desc')
                 ->paginate($limit, ['*'], 'page', $page);
 
-            $articles->load('categories');
+            $articles->load(['categories', 'user']);
 
             $data = $articles->items();
             $formattedData = array_map(function($article) {
@@ -199,7 +199,7 @@ class Articles extends Controller
             'title' => $article->title,
             'slug' => $article->slug,
             'excerpt' => $article->excerpt,
-            'author_id' => $article->user_id,
+            'author_name' => $article->author_name, // Ganti author_id dengan author_name
             'published' => (bool) $article->published,
             'published_at' => $article->published_at,
             'created_at' => $article->created_at,
