@@ -63,17 +63,13 @@ class Articles extends Controller
     }
 
     // Tampilkan detail satu artikel
-    public function show($id)
+    public function show($slug)
     {
         try {
-            $article = Article::findOrFail($id);
-
-            if (!$article->published) {
-                return Response::json([
-                    'status' => 'error',
-                    'message' => 'Artikel tidak ditemukan'
-                ], 404);
-            }
+            // Cari artikel berdasarkan slug
+            $article = Article::where('slug', $slug)
+                ->where('published', true)
+                ->firstOrFail();
 
             $article->load(['categories', 'user']);
 
