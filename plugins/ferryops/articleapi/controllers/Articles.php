@@ -14,6 +14,7 @@ class Articles extends Controller
             $page = request('page', 1);
             $limit = request('limit', 10);
             $categoryId = request('category_id', null);
+            $search = request('search', null);
 
             // Validasi limit (max 100)
             $limit = $limit > 100 ? 100 : $limit;
@@ -25,6 +26,13 @@ class Articles extends Controller
             if ($categoryId) {
                 $query->whereHas('categories', function($q) use ($categoryId) {
                     $q->where('category_id', $categoryId);
+                });
+            }
+
+            if ($search && strlen($search) >= 2) {
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', '%' . $search . '%')
+                      ->orWhere('excerpt', 'like', '%' . $search . '%');
                 });
             }
 
@@ -195,7 +203,7 @@ class Articles extends Controller
             'title' => $article->title,
             'slug' => $article->slug,
             'excerpt' => $article->excerpt,
-            'author_name' => $article->author_name, // Ganti author_id dengan author_name
+            'author_name' => $article->author_name,
             'published' => (bool) $article->published,
             'published_at' => $article->published_at,
             'created_at' => $article->created_at,
